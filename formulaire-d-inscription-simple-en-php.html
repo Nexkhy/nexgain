@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Formulaire d&#039;inscription simple en PHP</title>
+	<style type="text/css">
+		#wrap {width:944px; margin:auto;}
+		#ribbon {height:150px;}
+		h1#logo {font: bold 46px Georgia, "Times New Roman", Times, serif; display:block; padding:5px 0 0 20px; color:#8cc731; float:left;; letter-spacing:-2px;}
+		#logo .desc {font:normal 14px "Trebuchet MS", Arial, Helvetica, sans-serif!important; color:#000; display:block!important; letter-spacing:7px; text-transform:uppercase; text-align:center;}
+		h1#logo .black {font-style:italic; color:#302a24!important;}
+		#logo a {color:#8cc731; text-decoration:none;}
+		#logo a .black {color:#302a24; text-decoration:none;}
+		#logo a:hover {color:#302a24;}
+		#logo a:hover .black {color:#8cc731!important;}
+		#intro {width:45%; float:right; padding:46px 10px 0 35px; height:90px}
+		#intro p {font:18px "Trebuchet MS", Arial, Helvetica, sans-serif; line-height:18px; display:block; float:left;}
+		#description { padding:10px;border:1px dashed gray; }
+		#description h2 {font: normal 22px Georgia, "Times New Roman", Times, serif; color:#8cc731; margin-bottom:12px;}
+		h1 a, h2 a, h3 a, h4 a {text-decoration:none;}
+		h1 a:visited, h2 a:visited, h3 a:visited {text-decoration:none;}
+		code { display: block; margin-bottom: 15px; padding: 10px; color: #000000; font: 14px "Courier New", Courier, monospace; white-space: pre; }
+	</style>
+	</head>
+<body>
+<div id="wrap">
+	<div id="ribbon">
+		<h1 id="logo"> <a href="https://www.c2script.com">C 2 <span class="black">Script</span></a>
+			<span class="desc">100% sur mesure !</span>
+		</h1>
+		<div id="intro">
+			<p>Formulaire d&#039;inscription simple en PHP</p>
+		</div>
+	</div>
+	<div id="description">
+		<h2>Description:</h2>
+		Si vous avez besoin d&#039;un formulaire d&#039;inscription en PHP pour votre site web, vous &ecirc;tes au bon endroit. Ce script d&#039;inscription simplifi&eacute; vous permet d&#039;enregistrer de nouveaux membres dans une base de donn&eacute;es MySQL sans tracas.<br>
+<br>
+Vous avez la libert&eacute; d&#039;ajouter ou de supprimer des champs de formulaire selon vos besoins. Le script a &eacute;t&eacute; con&ccedil;u pour &ecirc;tre aussi simple que possible, vous permettant ainsi de l&#039;int&eacute;grer et de le personnaliser &agrave; votre guise.<br>
+<br>
+Que vous cr&eacute;iez un site Web communautaire, un blog avec un compte utilisateur ou toute autre application n&eacute;cessitant une inscription, ce script vous offre une solution simple pour g&eacute;rer l&#039;inscription des nouveaux utilisateurs.<br>
+<div class="separateur"></div><h2>Cr&eacute;er un formulaire d&#039;inscription</h2><br>
+<pre data-enlighter-language="php">&lt;?php<br>
+	<br>
+	/* page: inscription.php */<br>
+<br>
+//connexion &agrave; la base de donn&eacute;es:<br>
+$BDD = array();<br>
+$BDD[&#039;host&#039;] = &quot;localhost&quot;;<br>
+$BDD[&#039;user&#039;] = &quot;root&quot;;<br>
+$BDD[&#039;pass&#039;] = &quot;&quot;;<br>
+$BDD[&#039;db&#039;] = &quot;nom_de_la_base_de_donnees&quot;;<br>
+$mysqli = mysqli_connect($BDD[&#039;host&#039;], $BDD[&#039;user&#039;], $BDD[&#039;pass&#039;], $BDD[&#039;db&#039;]);<br>
+if(!$mysqli) {<br>
+	echo &quot;Connexion non &eacute;tablie.&quot;;<br>
+	exit;<br>
+}<br>
+<br>
+	//cr&eacute;ation automatique de la table membres, une fois cr&eacute;&eacute;e, vous pouvez supprimer les lignes de code suivantes:<br>
+	echo mysqli_query($mysqli,&quot;CREATE TABLE IF NOT EXISTS `&quot;.$BDD[&#039;db&#039;].&quot;`.`membres` ( `id` INT NOT NULL AUTO_INCREMENT , `pseudo` VARCHAR(25) NOT NULL , `mdp` CHAR(32) NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM;&quot;)?&quot;Table membres cr&eacute;&eacute;e avec succ&egrave;s, vous pouvez maintenant supprimer la ligne &quot;. __LINE__ .&quot; de votre fichier &quot;. __FILE__ .&quot;!&quot;:&quot;Erreur cr&eacute;ation table membres: &quot;.mysqli_error($mysqli);<br>
+	//la table est cr&eacute;&eacute;e avec les param&egrave;tres suivants:<br>
+	//champ &quot;id&quot;: en auto increment pour un id unique, peux vous servir pour une identification future<br>
+	//champ &quot;pseudo&quot;: en varchar de 0 &agrave; 25 caract&egrave;res<br>
+	//champ &quot;mdp&quot;: en char fixe de 32 caract&egrave;res, soit la longueur de la fonction md5()<br>
+	//fin cr&eacute;ation automatique<br>
+<br>
+//par d&eacute;faut, on affiche le formulaire (quand il validera le formulaire sans erreur avec l&#039;inscription valid&eacute;e, on l&#039;affichera plus)<br>
+$AfficherFormulaire=1;<br>
+//traitement du formulaire:<br>
+if(isset($_POST[&#039;pseudo&#039;],$_POST[&#039;mdp&#039;])){//l&#039;utilisateur &agrave; cliqu&eacute; sur &quot;S&#039;inscrire&quot;, on demande donc si les champs sont d&eacute;fini avec &quot;isset&quot;<br>
+	if(empty($_POST[&#039;pseudo&#039;])){//le champ pseudo est vide, on arr&ecirc;te l&#039;ex&eacute;cution du script et on affiche un message d&#039;erreur<br>
+		echo &quot;Le champ Pseudo est vide.&quot;;<br>
+	} elseif(!preg_match(&quot;#^[a-z0-9]+$#&quot;,$_POST[&#039;pseudo&#039;])){//le champ pseudo est renseign&eacute; mais ne convient pas au format qu&#039;on souhaite qu&#039;il soit, soit: que des lettres minuscule + des chiffres (je pr&eacute;f&egrave;re personnellement enregistrer le pseudo de mes membres en minuscule afin de ne pas avoir deux pseudo identique mais diff&eacute;rents comme par exemple: Admin et admin)<br>
+		echo &quot;Le Pseudo doit &ecirc;tre renseign&eacute; en lettres minuscules sans accents, sans caract&egrave;res sp&eacute;ciaux.&quot;;<br>
+	} elseif(strlen($_POST[&#039;pseudo&#039;])&gt;25){//le pseudo est trop long, il d&eacute;passe 25 caract&egrave;res<br>
+		echo &quot;Le pseudo est trop long, il d&eacute;passe 25 caract&egrave;res.&quot;;<br>
+	} elseif(empty($_POST[&#039;mdp&#039;])){//le champ mot de passe est vide<br>
+		echo &quot;Le champ Mot de passe est vide.&quot;;<br>
+	} elseif(mysqli_num_rows(mysqli_query($mysqli,&quot;SELECT * FROM membres WHERE pseudo=&#039;&quot;.$_POST[&#039;pseudo&#039;].&quot;&#039;&quot;))==1){//on v&eacute;rifie que ce pseudo n&#039;est pas d&eacute;j&agrave; utilis&eacute; par un autre membre<br>
+		echo &quot;Ce pseudo est d&eacute;j&agrave; utilis&eacute;.&quot;;<br>
+	} else {<br>
+		//toutes les v&eacute;rifications sont faites, on passe &agrave; l&#039;enregistrement dans la base de donn&eacute;es:<br>
+		//Bien &eacute;videment il s&#039;agit l&agrave; d&#039;un script simplifi&eacute; au maximum, libre &agrave; vous de rajouter des conditions avant l&#039;enregistrement comme la longueur minimum du mot de passe par exemple<br>
+		if(!mysqli_query($mysqli,&quot;INSERT INTO membres SET pseudo=&#039;&quot;.$_POST[&#039;pseudo&#039;].&quot;&#039;, mdp=&#039;&quot;.md5($_POST[&#039;mdp&#039;]).&quot;&#039;&quot;)){//on crypte le mot de passe avec la fonction propre &agrave; PHP: md5()<br>
+			echo &quot;Une erreur s&#039;est produite: &quot;.mysqli_error($mysqli);//je conseille de ne pas afficher les erreurs aux visiteurs mais de l&#039;enregistrer dans un fichier log<br>
+		} else {<br>
+			echo &quot;Vous &ecirc;tes inscrit avec succ&egrave;s!&quot;;<br>
+			//on affiche plus le formulaire<br>
+			$AfficherFormulaire=0;<br>
+		}<br>
+	}<br>
+}<br>
+if($AfficherFormulaire==1){<br>
+	?&gt;<br>
+	&lt;!-- <br>
+	Les balises &lt;form&gt; sert &agrave; dire que c&#039;est un formulaire<br>
+	on lui demande de faire fonctionner la page inscription.php une fois le bouton &quot;S&#039;inscrire&quot; cliqu&eacute;<br>
+	on lui dit &eacute;galement que c&#039;est un formulaire de type &quot;POST&quot;<br>
+	 <br>
+	Les balises &lt;input&gt; sont les champs de formulaire<br>
+	type=&quot;text&quot; sera du texte<br>
+	type=&quot;password&quot; sera des petits points noir (texte cach&eacute;)<br>
+	type=&quot;submit&quot; sera un bouton pour valider le formulaire<br>
+	name=&quot;nom de l&#039;input&quot; sert &agrave; le reconnaitre une fois le bouton submit cliqu&eacute;, pour le code PHP<br>
+	 --&gt;<br>
+	&lt;br /&gt;<br>
+	&lt;form method=&quot;post&quot; action=&quot;inscription.php&quot;&gt;<br>
+		Pseudo (a-z0-9) : &lt;input type=&quot;text&quot; name=&quot;pseudo&quot;&gt;<br>
+		&lt;br /&gt;<br>
+		Mot de passe : &lt;input type=&quot;password&quot; name=&quot;mdp&quot;&gt;<br>
+		&lt;br /&gt;<br>
+		&lt;input type=&quot;submit&quot; value=&quot;S&#039;inscrire&quot;&gt;<br>
+	&lt;/form&gt;<br>
+	&lt;?php<br>
+}<br>
+?&gt;</pre><br>
+<br>
+La table membres est cr&eacute;&eacute;e automatiquement quand vous lancez le fichier inscription.php mais je vous met le code si besoin:<br>
+<pre data-enlighter-language="sql">CREATE TABLE `membres` (<br>
+ `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,<br>
+ `pseudo` varchar(25) COLLATE utf8_unicode_ci NOT NULL,<br>
+ `mdp` char(32) COLLATE utf8_unicode_ci NOT NULL<br>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;</pre><br>
+<br>
+Une fois inscrit, vous pourrez vous connecter avec le <a href="https://www.c2script.com/scripts/formulaire-de-connexion-en-php-s3.html" title="Script de connexion simple en PHP">script de connexion</a>	</div>
+</div>
+</body>
+</html>
+		
